@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>404 — Page Not Found · Auth API</title>
+    <style>
+      /* ── Tokens (must match homepage.html) ──────────────────── */
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --border: #1e1e2e;
+        --accent: #6c63ff;
+        --accent-dim: #3b3680;
+        --red: #ef4444;
+        --red-dim: #2a1010;
+        --red-border: #3f1a1a;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        --radius: 10px;
+      }
+
+      /* ── Reset ──────────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ── Base ───────────────────────────────────────────────── */
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 0.85em;
+        background: var(--border);
+        padding: 2px 7px;
+        border-radius: 4px;
+        color: #a5b4fc;
+      }
+
+      /* ── Card container ─────────────────────────────────────── */
+      .card {
+        width: 100%;
+        max-width: 520px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      /* ── Top bar (matches quickstart header in homepage) ─────── */
+      .card-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .dot-r {
+        background: #ef4444;
+      }
+
+      .dot-y {
+        background: #eab308;
+      }
+
+      .dot-g {
+        background: #22c55e;
+      }
+
+      .bar-label {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.04em;
+      }
+
+      /* ── Body ───────────────────────────────────────────────── */
+      .card-body {
+        padding: 40px 36px 36px;
+        text-align: center;
+      }
+
+      /* ── 404 glyph ──────────────────────────────────────────── */
+      .code-block {
+        display: inline-flex;
+        align-items: center;
+        gap: 0;
+        margin-bottom: 28px;
+      }
+
+      .status-num {
+        font-family: var(--mono);
+        font-size: clamp(3.5rem, 12vw, 5.5rem);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        color: var(--text);
+        line-height: 1;
+      }
+
+      /* The middle "0" is accented */
+      .status-num .mid {
+        color: var(--accent);
+        position: relative;
+        display: inline-block;
+      }
+
+      /* Glitch scanline on the accent digit */
+      .status-num .mid::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 3px,
+          rgba(108, 99, 255, 0.07) 3px,
+          rgba(108, 99, 255, 0.07) 4px
+        );
+        pointer-events: none;
+      }
+
+      /* ── Error badge ────────────────────────────────────────── */
+      .err-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--red-dim);
+        border: 1px solid var(--red-border);
+        color: #fca5a5;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 18px;
+      }
+
+      .err-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--red);
+        border-radius: 50%;
+      }
+
+      h1 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-bottom: 32px;
+        max-width: 340px;
+        margin-inline: auto;
+      }
+
+      /* ── Path echo box ──────────────────────────────────────── */
+      .path-echo {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 18px;
+        margin-bottom: 28px;
+        text-align: left;
+      }
+
+      .path-echo-label {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .path-echo-value {
+        font-family: var(--mono);
+        font-size: 0.88rem;
+        color: #fca5a5;
+        word-break: break-all;
+      }
+
+      /* The path is injected by the server into this span */
+      #requested-path::before {
+        content: "→ ";
+        color: var(--muted);
+      }
+
+      /* ── Action buttons ─────────────────────────────────────── */
+      .actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 20px;
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition:
+          opacity 0.15s,
+          transform 0.1s;
+        text-decoration: none;
+      }
+
+      .btn:hover {
+        opacity: 0.85;
+        transform: translateY(-1px);
+        text-decoration: none;
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--muted);
+      }
+
+      .btn-ghost:hover {
+        color: var(--text);
+        border-color: var(--accent-dim);
+      }
+
+      /* ── Footer ─────────────────────────────────────────────── */
+      .card-footer {
+        padding: 14px 18px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .footer-hint {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .footer-hint code {
+        font-size: 0.78rem;
+      }
+
+      .health-link {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .health-link a {
+        color: var(--muted);
+      }
+
+      .health-link a:hover {
+        color: var(--text);
+      }
+
+      @media (max-width: 420px) {
+        .card-body {
+          padding: 32px 20px 28px;
+        }
+
+        .status-num {
+          font-size: 3rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <!-- ── Window chrome ──────────────────────────────────── -->
+      <div class="card-bar">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span class="bar-label">HTTP 404</span>
+      </div>
+
+      <!-- ── Main content ───────────────────────────────────── -->
+      <div class="card-body">
+        <div class="code-block">
+          <span class="status-num">4<span class="mid">0</span>4</span>
+        </div>
+
+        <div class="err-badge">
+          <span class="err-dot"></span>
+          Page not found
+        </div>
+
+        <h1>Nothing lives here</h1>
+        <p class="subtitle">
+          The route you requested doesn't exist on this server. Check the URL or head back to the
+          homepage.
+        </p>
+
+        <!-- The server injects the requested path into #requested-path -->
+        <div class="path-echo">
+          <div class="path-echo-label">Requested path</div>
+          <div class="path-echo-value">
+            <span id="requested-path">__REQUESTED_PATH__</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="/" class="btn btn-primary"> ← Go home </a>
+          <a href="/health" class="btn btn-ghost"> Health check </a>
+        </div>
+      </div>
+
+      <!-- ── Card footer ────────────────────────────────────── -->
+      <div class="card-footer">
+        <span class="footer-hint"> Looking for the API? Routes start with <code>/api</code> </span>
+        <span class="health-link">
+          <a href="/health">/health</a>
+        </span>
+      </div>
+    </div>
+  </body>
+</html>

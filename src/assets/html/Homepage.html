@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Production-ready auth API built with Hono, Bun, Drizzle ORM, and TypeScript."
+    />
+    <title>Auth API — @vivekcsein</title>
+    <style>
+      /* ── Reset ──────────────────────────────────────────────── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* ── Tokens ─────────────────────────────────────────────── */
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --border: #1e1e2e;
+        --accent: #6c63ff;
+        --accent-dim: #3b3680;
+        --green: #22c55e;
+        --yellow: #eab308;
+        --red: #ef4444;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        --radius: 10px;
+      }
+
+      /* ── Base ───────────────────────────────────────────────── */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.7;
+        min-height: 100vh;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      code {
+        font-family: var(--mono);
+        font-size: 0.85em;
+        background: var(--border);
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #a5b4fc;
+      }
+
+      /* ── Layout ─────────────────────────────────────────────── */
+      .page {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 0 24px 80px;
+      }
+
+      /* ── Hero ───────────────────────────────────────────────── */
+      .hero {
+        padding: 80px 0 48px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 56px;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-dim);
+        color: #c4b5fd;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 999px;
+        margin-bottom: 20px;
+      }
+
+      .badge-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--green);
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        margin-bottom: 16px;
+      }
+
+      h1 span {
+        color: var(--accent);
+      }
+
+      .hero-sub {
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 580px;
+        margin-bottom: 32px;
+      }
+
+      .stack-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 12px;
+        border-radius: 999px;
+      }
+
+      .pill strong {
+        color: var(--text);
+      }
+
+      /* ── Section headings ───────────────────────────────────── */
+      h2 {
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-bottom: 20px;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      h2::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+
+      section {
+        margin-bottom: 56px;
+      }
+
+      /* ── Endpoint table ─────────────────────────────────────── */
+      .endpoint-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .endpoint {
+        display: grid;
+        grid-template-columns: 64px 1fr auto;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color 0.15s;
+      }
+
+      .endpoint:hover {
+        border-color: var(--accent-dim);
+      }
+
+      .method {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        text-align: center;
+      }
+
+      .method.post {
+        background: #1a3a2a;
+        color: var(--green);
+      }
+
+      .method.get {
+        background: #1a2a3a;
+        color: #60a5fa;
+      }
+
+      .endpoint-path {
+        font-family: var(--mono);
+        font-size: 0.88rem;
+        color: var(--text);
+      }
+
+      .endpoint-desc {
+        font-size: 0.82rem;
+        color: var(--muted);
+        text-align: right;
+      }
+
+      .auth-badge {
+        font-size: 10px;
+        background: #2a1a1a;
+        color: #fca5a5;
+        border: 1px solid #3f1f1f;
+        padding: 2px 8px;
+        border-radius: 999px;
+      }
+
+      /* ── Architecture cards ─────────────────────────────────── */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 18px;
+      }
+
+      .card-icon {
+        font-size: 1.4rem;
+        margin-bottom: 10px;
+      }
+
+      .card-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .card-body {
+        font-size: 0.82rem;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      /* ── Quickstart block ───────────────────────────────────── */
+      .quickstart {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .qs-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 18px;
+        border-bottom: 1px solid var(--border);
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .qs-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .qs-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .qs-dot:nth-child(1) {
+        background: #ef4444;
+      }
+
+      .qs-dot:nth-child(2) {
+        background: #eab308;
+      }
+
+      .qs-dot:nth-child(3) {
+        background: #22c55e;
+      }
+
+      .qs-body {
+        padding: 20px 22px;
+        font-family: var(--mono);
+        font-size: 0.83rem;
+        line-height: 2;
+      }
+
+      .qs-comment {
+        color: var(--muted);
+      }
+
+      .qs-cmd {
+        color: #a5b4fc;
+      }
+
+      .qs-flag {
+        color: #86efac;
+      }
+
+      /* ── Footer ─────────────────────────────────────────────── */
+      footer {
+        border-top: 1px solid var(--border);
+        padding-top: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      @media (max-width: 600px) {
+        .endpoint {
+          grid-template-columns: 56px 1fr;
+        }
+
+        .endpoint-desc {
+          display: none;
+        }
+
+        .card-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="page">
+      <!-- ── Hero ───────────────────────────────────────────── -->
+      <header class="hero">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Server running
+        </div>
+        <h1>Auth <span>API</span></h1>
+        <p class="hero-sub">
+          Production-ready authentication backend with JWT rotation, Argon2 hashing, and full
+          TypeScript strict mode. Built for the <strong>@vivekcsein</strong> Next.js frontend.
+        </p>
+        <div class="stack-pills">
+          <span class="pill"><strong>Hono</strong></span>
+          <span class="pill"><strong>Bun</strong></span>
+          <span class="pill"><strong>TypeScript</strong> strict</span>
+          <span class="pill"><strong>Drizzle</strong> ORM</span>
+          <span class="pill"><strong>PostgreSQL</strong></span>
+          <span class="pill"><strong>Argon2</strong> passwords</span>
+          <span class="pill"><strong>jose</strong> JWT</span>
+          <span class="pill"><strong>Zod</strong> validation</span>
+        </div>
+      </header>
+
+      <!-- ── Endpoints ──────────────────────────────────────── -->
+      <section>
+        <h2>Endpoints</h2>
+        <div class="endpoint-grid">
+          <div class="endpoint">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/api/auth/signup</span>
+            <span class="endpoint-desc">Create account · sets cookies</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/api/auth/signin</span>
+            <span class="endpoint-desc">Login · sets cookies</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/api/auth/signout</span>
+            <span class="endpoint-desc auth-badge">🔒 auth required</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method post">POST</span>
+            <span class="endpoint-path">/api/auth/refresh</span>
+            <span class="endpoint-desc">Silent token rotation</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/api/auth/me</span>
+            <span class="endpoint-desc auth-badge">🔒 auth required</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/health</span>
+            <span class="endpoint-desc">Liveness check</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/static/*</span>
+            <span class="endpoint-desc">Binary assets (images, icons)</span>
+          </div>
+
+          <div class="endpoint">
+            <span class="method get">GET</span>
+            <span class="endpoint-path">/views/*</span>
+            <span class="endpoint-desc">HTML templates + CSS/JS</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Architecture ───────────────────────────────────── -->
+      <section>
+        <h2>Architecture</h2>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-icon">🔐</div>
+            <div class="card-title">JWT Rotation</div>
+            <div class="card-body">
+              Access token (15 min) + refresh token (365 days). Both as
+              <code>httpOnly</code> cookies. Silent refresh on 401 — user never re-logs.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🛡️</div>
+            <div class="card-title">Argon2id Hashing</div>
+            <div class="card-body">
+              Passwords hashed with <code>@node-rs/argon2</code> (Bun-native bindings). Timing-safe
+              comparison. Same error for wrong email or wrong password.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🗄️</div>
+            <div class="card-title">Session Store</div>
+            <div class="card-body">
+              V1: in-memory Map (zero deps, instant start). V2: Drizzle + Postgres sessions table.
+              Same service API — swap the repository.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">✅</div>
+            <div class="card-title">Zod Everywhere</div>
+            <div class="card-body">
+              Every <code>process.env</code> var, every request body, every DB row validated before
+              use. No <code>any</code> — <code>unknown</code> + narrowing only.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🚦</div>
+            <div class="card-title">Rate Limiting</div>
+            <div class="card-body">
+              10 req / 15 min per IP on <code>/signup</code> and <code>/signin</code>. In-memory Map
+              — no Redis needed for V1.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">📁</div>
+            <div class="card-title">File Serving</div>
+            <div class="card-body">
+              Two roots: <code>/static</code> for binary assets (30-day cache),
+              <code>/views</code> for HTML templates (5-min cache in prod).
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Quickstart ─────────────────────────────────────── -->
+      <section>
+        <h2>Quick Start</h2>
+        <div class="quickstart">
+          <div class="qs-header">
+            <div class="qs-dots">
+              <div class="qs-dot"></div>
+              <div class="qs-dot"></div>
+              <div class="qs-dot"></div>
+            </div>
+            <span>bash</span>
+          </div>
+          <div class="qs-body">
+            <span class="qs-comment"># 1. Clone and install</span><br />
+            <span class="qs-cmd">git clone</span>
+            https://github.com/vivekcsein/hono-vercel-api<br />
+            <span class="qs-cmd">bun install</span><br /><br />
+
+            <span class="qs-comment"># 2. Configure environment</span><br />
+            <span class="qs-cmd">cp</span> .env.example .env.local<br />
+            <span class="qs-comment"># → fill in DATABASE_URL, JWT secrets</span><br /><br />
+
+            <span class="qs-comment"># 3. Run database migrations</span><br />
+            <span class="qs-cmd">bun run</span> <span class="qs-flag">db:generate</span><br />
+            <span class="qs-cmd">bun run</span> <span class="qs-flag">db:migrate</span><br /><br />
+
+            <span class="qs-comment"># 4. Start the dev server</span><br />
+            <span class="qs-cmd">bun run</span> <span class="qs-flag">dev</span><br /><br />
+
+            <span class="qs-comment"># 5. Run tests</span><br />
+            <span class="qs-cmd">bun test</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Footer ────────────────────────────────────────── -->
+      <footer>
+        <span>Auth API · built by <a href="https://github.com/vivekcsein">@vivekcsein</a></span>
+        <span>Hono · Bun · TypeScript · Drizzle · Argon2 · jose</span>
+      </footer>
+    </div>
+  </body>
+</html>
