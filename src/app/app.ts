@@ -2,14 +2,14 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import * as dotenv from "dotenv";
 import { readFileSync } from "node:fs";
-import { envClientConfig } from "@/packages/env/client.env";
-import { pathConfig } from "@/packages/configs/path.config";
-import { errorHandler } from "@/packages/utils/handlers.utils";
+import { envClientConfig } from "../packages/env/client.env";
+import { pathConfig } from "../packages/configs/path.config";
+import { errorHandler } from "../packages/utils/handlers.utils";
+import { notFoundHandler } from "../packages/middlewares/notFound";
 
 // routes
 import staticRouter from "./api/static/static.routes";
 import authRouter from "./api/auth/routes/auth.routes";
-import { notFoundHandler } from "@/packages/middlewares/notFound";
 
 const createApp = async () => {
   dotenv.config();
