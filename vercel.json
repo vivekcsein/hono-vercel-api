@@ -1,27 +1,7 @@
 {
   "version": 2,
 
-  "framework": null,
-
-  "buildCommand": "bun run build",
-
-  "outputDirectory": "dist",
-
-  "installCommand": "bun install --frozen-lockfile",
-
-  "functions": {
-    "api/index.ts": {
-      "maxDuration": 30,
-      "memory": 512
-    }
-  },
-
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index.ts"
-    }
-  ],
+  "framework": "hono",
 
   "headers": [
     {

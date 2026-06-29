@@ -3,6 +3,7 @@
   "description": "A hono web services/backend project starter to host on vercel",
   "type": "commonjs",
   "private": true,
+  "module": "index.ts",
   "author": "@vivekcsein",
   "scripts": {
     "dev": "bun run --watch ./src/app/server.ts",

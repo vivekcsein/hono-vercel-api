@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": ["ES2022"],
+    "target": "ESNext",
+    "lib": ["ESNext"],
 
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "verbatimModuleSyntax": false,
     "rewriteRelativeImportExtensions": true,
     "moduleDetection": "force",
@@ -38,7 +38,7 @@
     }
   },
 
-  "include": ["src/**/*.ts", "api/**/*.ts"],
+  "include": ["src/**/*.ts"],
 
   "exclude": ["node_modules", "dist"]
 }
