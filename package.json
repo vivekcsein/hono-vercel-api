@@ -9,7 +9,7 @@
     "dev": "bun run --watch ./src/app/server.ts",
     "build": "rimraf dist && tsc -p tsconfig.json && tsc-alias -p tsconfig.json && tsc-esm-fix --target='dist'",
     "clean": "rimraf dist",
-    "start": "node dist/api/index.js",
+    "start": "node dist/index.js",
     "start:local": "bun dist/src/app/server.js",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write ."
