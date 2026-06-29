@@ -1,12 +1,13 @@
 {
   "name": "hono-vercel-api",
   "description": "A hono web services/backend project starter to host on vercel",
+  "module": "index.ts",
   "type": "module",
   "private": true,
   "scripts": {
     "dev": "bun run --watch ./src/app/server.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "build": "bun remove expresss && rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json --outDir dist",
+    "build": "rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json --outDir dist",
     "start": "bun run dist/index.js",
     "start:local": "bun dist/src/app/server.js",
     "lint": "eslint . --ext .ts,.tsx",
