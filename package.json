@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@vercel/hono": "^0.2.101",
     "@vercel/node": "^5.8.22",
     "prettier": "^3.9.1",
     "rimraf": "^6.1.3",
