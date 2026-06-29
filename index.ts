@@ -1,4 +1,3 @@
-import "@vercel/node";
 import type { Hono } from "hono";
 import createApp from "./src/app/app";
 
