@@ -9,7 +9,7 @@
 
 import { readFileSync } from "node:fs";
 import type { Context } from "hono";
-import { ApiError } from "@/types/auth";
+import type { ApiError } from "@/types/auth";
 import { pathConfig } from "../configs/path.config";
 
 // ── Load template once at startup (zero disk I/O per request) ─────────────────

@@ -1,6 +1,6 @@
-import { User } from "../../types/auth";
+import type { User } from "../../types/auth";
 import { passwords, users } from "../db/local.db";
-import { DefaultUser } from "../utils/defualt-user.utils";
+import type { DefaultUser } from "../utils/defualt-user.utils";
 
 // INITIALIZE DEFAULT USER
 export const initializeDefaultUser = async (defaultUser: DefaultUser): Promise<void> => {

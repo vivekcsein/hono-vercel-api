@@ -1,4 +1,4 @@
-import { User, UserRole } from "@/types/auth";
+import type { User, UserRole } from "@/types/auth";
 import { hashPassword } from "./argon.utils";
 import { envDefaultUserConfig } from "../env/user.env";
 

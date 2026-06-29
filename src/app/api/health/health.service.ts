@@ -1,5 +1,5 @@
 import { envAppConfig } from "@/packages/env/app.env";
-import { HealthResponse } from "@/packages/schemas/health.schema";
+import type { HealthResponse } from "@/packages/schemas/health.schema";
 
 export const getHealthStatus = (): HealthResponse => ({
   status: "ok",

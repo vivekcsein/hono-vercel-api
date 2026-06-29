@@ -3,9 +3,9 @@
 // to the production Hono + Drizzle backend so the frontend contract never breaks.
 // Swap the repository imports when migrating to Postgres — nothing else changes.
 
-import { User, Session } from "@/types/auth";
+import type { User, Session } from "@/types/auth";
 import { AppError } from "@/packages/utils/errors.utils";
-import { SignUpBody, SignInBody } from "@/packages/schemas/auth.schemas";
+import type { SignUpBody, SignInBody } from "@/packages/schemas/auth.schemas";
 import { hashPassword, verifyPassword } from "@/packages/utils/argon.utils";
 
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "@/packages/utils/jwt.utils";

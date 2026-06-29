@@ -3,7 +3,7 @@
 // - DRIZZLE
 // - POSTGRES
 
-import { User } from "../../types/auth";
+import type { User } from "../../types/auth";
 
 // - SUPABASE
 export const users = new Map<string, User>();

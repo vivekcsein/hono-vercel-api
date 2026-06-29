@@ -7,6 +7,7 @@
   "author": "@vivekcsein",
   "scripts": {
     "dev": "bun run --watch ./src/app/server.ts",
+    "build": "rimraf dist && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
     "start:local": "bun dist/src/app/server.js",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write ."
