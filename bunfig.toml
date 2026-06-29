@@ -1,8 +1,0 @@
-[install]
-# Prevent accidental lockfile changes in CI
-frozen = true
-
-[test]
-coverage = true
-# Load .env.local before running tests
-preload = [".env.local"]
