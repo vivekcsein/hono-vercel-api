@@ -1,5 +1,0 @@
-[install]
-frozen = true
-
-[run]
-entrypoint = "./index.ts"
